@@ -1,0 +1,153 @@
+.wm-verse-card {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wm-verse-card__trigger {
+  position: relative;
+  width: 100%;
+  min-height: 220px;
+  background: linear-gradient(160deg, var(--wm-cream-deep), var(--wm-cream));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+
+.wm-verse-card__trigger:hover {
+  border-color: var(--color-accent);
+}
+
+.wm-verse-card__trigger:hover .wm-verse-card__glow {
+  opacity: 1;
+  transform: scale(1.4);
+}
+
+.wm-verse-card__glow {
+  position: absolute;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(217, 162, 75, 0.45), rgba(217, 162, 75, 0) 70%);
+  opacity: 0.6;
+  transform: scale(1);
+  transition: opacity 0.4s ease, transform 0.6s ease;
+  pointer-events: none;
+  animation: wm-glow-breathe 4s ease-in-out infinite;
+}
+
+@keyframes wm-glow-breathe {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.12);
+  }
+}
+
+.wm-verse-card__trigger-label {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--color-accent-deep);
+  font-size: 0.9375rem;
+  z-index: 1;
+}
+
+.wm-verse-card__trigger-ref {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--color-text-primary);
+  z-index: 1;
+}
+
+.wm-verse-card__content {
+  position: relative;
+  width: 100%;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.wm-verse-card__content::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  background: radial-gradient(circle at 50% 40%, rgba(217, 162, 75, 0.55), rgba(217, 162, 75, 0) 65%);
+  animation: wm-verse-burst 0.9s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes wm-verse-burst {
+  from {
+    opacity: 1;
+    transform: scale(0.3);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+.wm-verse-card__content:focus-visible {
+  outline: 2px solid var(--color-accent-deep);
+  outline-offset: 2px;
+}
+
+.wm-verse-card__text {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 1.375rem;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  margin: 0 0 1rem 0;
+  animation: wm-verse-fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.wm-verse-card__reference {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--color-accent-deep);
+  margin: 0;
+  animation: wm-verse-fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 0.12s;
+}
+
+@keyframes wm-verse-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wm-verse-card__glow {
+    animation: none;
+  }
+  .wm-verse-card__content::before {
+    animation: none;
+    display: none;
+  }
+  .wm-verse-card__text,
+  .wm-verse-card__reference {
+    animation: none;
+  }
+}

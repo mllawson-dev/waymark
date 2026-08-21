@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Nunito+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Brand palette — Waymark: Warm & Modern */
+  --wm-cream: #FBF6EE;
+  --wm-cream-deep: #F4EBDA;
+  --wm-ink: #3D2E1F;
+  --wm-ink-muted: #6E614F; /* darkened from #8A7A63 for WCAG AA text contrast (5.6:1 on cream) */
+  --wm-terracotta: #C97C3D; /* decorative use only — borders, glows, logo; too light for AA text on cream */
+  --wm-terracotta-deep: #965D2D; /* darkened from #A6642E for WCAG AA text contrast (5.0:1 on cream, 5.4:1 white-on-bg) */
+  --wm-gold: #D9A24B;
+  --wm-border: #E4D8C3;
+  --wm-sage: #5F6B54; /* darkened from #7C8B6F for WCAG AA text contrast */
+
+  /* Semantic aliases */
+  --color-bg: var(--wm-cream);
+  --color-surface: #FFFFFF;
+  --color-text-primary: var(--wm-ink);
+  --color-text-secondary: var(--wm-ink-muted);
+  --color-accent: var(--wm-terracotta);
+  --color-accent-deep: var(--wm-terracotta-deep);
+  --color-border: var(--wm-border);
+  --color-success: var(--wm-sage);
+
+  /* Typography */
+  --font-heading: 'Fraunces', Georgia, serif;
+  --font-body: 'Nunito Sans', -apple-system, sans-serif;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+}

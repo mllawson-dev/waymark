@@ -1,0 +1,32 @@
+.wm-logo__needle {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.wm-logo:hover .wm-logo__needle {
+  animation: wm-needle-settle 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes wm-needle-settle {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-10deg);
+  }
+  55% {
+    transform: rotate(6deg);
+  }
+  80% {
+    transform: rotate(-2deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wm-logo:hover .wm-logo__needle {
+    animation: none;
+  }
+}

@@ -1,0 +1,26 @@
+.wm-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+}
+
+.wm-badge--accent {
+  background-color: rgba(201, 124, 61, 0.12);
+  color: var(--color-accent-deep);
+}
+
+.wm-badge--sage {
+  background-color: rgba(124, 139, 111, 0.14);
+  color: var(--wm-sage);
+}
+
+.wm-badge--neutral {
+  background-color: var(--wm-cream-deep);
+  color: var(--color-text-secondary);
+}

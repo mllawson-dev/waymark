@@ -1,0 +1,59 @@
+.wm-streak-badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  background-color: rgba(124, 139, 111, 0.14);
+  animation: wm-streak-appear 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes wm-streak-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.wm-streak-badge__count {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--wm-sage);
+  display: inline-block;
+}
+
+.wm-streak-badge__count--pop {
+  animation: wm-streak-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes wm-streak-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.wm-streak-badge__label {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--wm-sage);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wm-streak-badge {
+    animation: none;
+  }
+  .wm-streak-badge__count--pop {
+    animation: none;
+  }
+}
