@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Card, CardTitle, CardBody, CardFooter } from './Card';
 import { Badge } from './Badge';
+import { formatPrice } from '../utils/format';
 import type { Product } from '../types/product';
 
 export function ProductCard({ product }: { product: Product }) {
@@ -14,7 +15,7 @@ export function ProductCard({ product }: { product: Product }) {
         <CardBody>{product.description}</CardBody>
         <CardFooter>
           <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, color: 'var(--color-text-primary)' }}>
-            ${product.basePrice}
+            {formatPrice(product.basePrice)}
           </span>
         </CardFooter>
       </Card>

@@ -2,6 +2,7 @@ import { WaymarkLogo } from '../components/WaymarkLogo';
 import { Card, CardTitle, CardBody } from '../components/Card';
 import { ScrollReveal } from '../components/ScrollReveal';
 import { PageContainer } from '../components/PageContainer';
+import { PageTitle } from '../components/PageTitle';
 
 const values = [
   {
@@ -25,17 +26,9 @@ export function AboutPage() {
         <WaymarkLogo size={56} />
       </div>
 
-      <h1
-        style={{
-          fontFamily: 'var(--font-heading)',
-          fontSize: '2rem',
-          color: 'var(--color-text-primary)',
-          textAlign: 'center',
-          marginBottom: '1rem',
-        }}
-      >
+      <PageTitle size="lg" style={{ textAlign: 'center', marginBottom: '1rem' }}>
         Every step has a purpose
-      </h1>
+      </PageTitle>
 
       <p
         style={{

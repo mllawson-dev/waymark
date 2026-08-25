@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { cx } from '../utils/classNames';
 import './VerseCard.css';
 
 interface VerseCardProps {
@@ -18,7 +19,7 @@ export function VerseCard({ reference, text }: VerseCardProps) {
   }
 
   return (
-    <div className={`wm-verse-card ${revealed ? 'wm-verse-card--revealed' : ''}`}>
+    <div className={cx('wm-verse-card', revealed && 'wm-verse-card--revealed')}>
       {!revealed ? (
         <button
           className="wm-verse-card__trigger"

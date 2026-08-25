@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { cx } from '../utils/classNames';
 import './Button.css';
 
 type ButtonVariant = 'primary' | 'secondary' | 'ghost';
@@ -17,9 +18,7 @@ export function Button({
   children,
   ...rest
 }: ButtonProps) {
-  const classes = ['wm-button', `wm-button--${variant}`, `wm-button--${size}`, className]
-    .filter(Boolean)
-    .join(' ');
+  const classes = cx('wm-button', `wm-button--${variant}`, `wm-button--${size}`, className);
 
   return (
     <button className={classes} {...rest}>

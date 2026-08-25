@@ -1,37 +1,38 @@
-import { useParams, Link } from 'react-router-dom';
-import { resources } from '../data/resources';
+import { useParams } from 'react-router-dom';
+import { findResource } from '../data/resources';
 import { Badge } from '../components/Badge';
+import { BackLink } from '../components/BackLink';
 import { Button } from '../components/Button';
 import { categoryLabels } from '../data/categoryLabels';
+import { NotFoundMessage } from '../components/NotFoundMessage';
 import { PageContainer } from '../components/PageContainer';
+import { PageTitle } from '../components/PageTitle';
 
 export function ResourceDetailPage() {
   const { resourceId } = useParams<{ resourceId: string }>();
-  const resource = resources.find((r) => r.id === resourceId);
+  const resource = findResource(resourceId);
 
   if (!resource) {
     return (
-      <PageContainer>
-        <p style={{ fontFamily: 'var(--font-body)' }}>
-          We couldn't find that resource. <Link to="/resources">Back to resources</Link>
-        </p>
-      </PageContainer>
+      <NotFoundMessage
+        message="We couldn't find that resource."
+        backTo="/resources"
+        backLabel="Back to resources"
+      />
     );
   }
 
   return (
     <PageContainer>
-      <Link to="/resources" style={{ fontFamily: 'var(--font-body)', fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
-        &larr; Back to resources
-      </Link>
+      <BackLink to="/resources">Back to resources</BackLink>
 
       <div style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>
         <Badge tone="accent">{categoryLabels[resource.category]}</Badge>
       </div>
 
-      <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '2rem', color: 'var(--color-text-primary)', margin: '0 0 0.75rem 0' }}>
+      <PageTitle size="lg" style={{ margin: '0 0 0.75rem 0' }}>
         {resource.title}
-      </h1>
+      </PageTitle>
 
       <p style={{ fontFamily: 'var(--font-body)', color: 'var(--color-text-primary)', lineHeight: 1.7, marginBottom: '1.5rem' }}>
         {resource.body}

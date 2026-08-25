@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { cx } from '../utils/classNames';
 import './Card.css';
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
@@ -7,9 +8,7 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 export function Card({ children, padded = true, className = '', ...rest }: CardProps) {
-  const classes = ['wm-card', padded ? 'wm-card--padded' : '', className]
-    .filter(Boolean)
-    .join(' ');
+  const classes = cx('wm-card', padded && 'wm-card--padded', className);
 
   return (
     <div className={classes} {...rest}>

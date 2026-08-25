@@ -1,7 +1,11 @@
-import type { Product } from '../types/product';
+import type { Product, ProductVariant } from '../types/product';
 
-export function findProduct(productId: string): Product | undefined {
+export function findProduct(productId: string | undefined): Product | undefined {
   return products.find((p) => p.id === productId);
+}
+
+export function findVariant(product: Product, variantId: string): ProductVariant | undefined {
+  return product.variants.find((v) => v.id === variantId);
 }
 
 export const products: Product[] = [
