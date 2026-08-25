@@ -7,11 +7,14 @@ import { Card, CardTitle, CardBody } from '../components/Card';
 import { ScrollReveal } from '../components/ScrollReveal';
 import { LiveAnnouncer } from '../components/LiveAnnouncer';
 import { PageContainer } from '../components/PageContainer';
+import { PageTitle } from '../components/PageTitle';
+import { CheckPop } from '../components/CheckPop';
 import {
   getProgress,
   markDevotionalComplete,
   isDevotionalComplete,
 } from '../services/devotionalProgress';
+import { pluralize } from '../utils/format';
 import type { DevotionalProgress } from '../types/devotional';
 
 export function DevotionalPage() {
@@ -27,17 +30,13 @@ export function DevotionalPage() {
     const updated = markDevotionalComplete(today.id);
     setProgress(updated);
     setCompleted(true);
-    setAnnouncement(
-      `Marked as read. Streak: ${updated.currentStreak} day${updated.currentStreak === 1 ? '' : 's'}.`
-    );
+    setAnnouncement(`Marked as read. Streak: ${pluralize(updated.currentStreak, 'day')}.`);
   }
 
   if (!today) {
     return (
       <PageContainer>
-        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.75rem', color: 'var(--color-text-primary)' }}>
-          Today's devotional
-        </h1>
+        <PageTitle>Today's devotional</PageTitle>
         <p style={{ fontFamily: 'var(--font-body)', color: 'var(--color-text-secondary)', marginTop: '1rem' }}>
           No devotional is available right now — check back soon.
         </p>
@@ -48,9 +47,7 @@ export function DevotionalPage() {
   return (
     <PageContainer>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.75rem', color: 'var(--color-text-primary)', margin: 0 }}>
-          Today's devotional
-        </h1>
+        <PageTitle style={{ margin: 0 }}>Today's devotional</PageTitle>
         <StreakBadge streak={progress.currentStreak} />
       </div>
 
@@ -84,11 +81,7 @@ export function DevotionalPage() {
           aria-disabled={completed}
           style={completed ? { cursor: 'default' } : undefined}
         >
-          {completed && (
-            <span className="wm-check-pop" aria-hidden="true">
-              ✓
-            </span>
-          )}
+          {completed && <CheckPop />}
           {completed ? "Marked as read today" : 'Mark as read'}
         </Button>
         <LiveAnnouncer message={announcement} />

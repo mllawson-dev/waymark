@@ -1,27 +1,35 @@
+import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/useCart';
-import { findProduct } from '../data/products';
+import { cartLineKey, resolveCartItem } from '../utils/cart';
+import { formatPrice } from '../utils/format';
 import { Button } from './Button';
-import { WaymarkLogo } from './WaymarkLogo';
+import { EmptyState } from './EmptyState';
+
+const stepperButtonStyle: CSSProperties = {
+  border: '1px solid var(--color-border)',
+  background: 'none',
+  borderRadius: '4px',
+  width: '28px',
+  height: '28px',
+  cursor: 'pointer',
+};
 
 export function CartContents() {
   const { items, updateQuantity, removeItem, subtotal } = useCart();
 
   if (items.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '2rem 0.5rem' }}>
-        <div style={{ opacity: 0.35, marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
-          <WaymarkLogo size={40} northColor="var(--wm-ink-muted)" southColor="var(--wm-ink-muted)" ringColor="var(--wm-ink-muted)" />
-        </div>
-        <p style={{ fontFamily: 'var(--font-body)', color: 'var(--color-text-secondary)', marginBottom: '1.25rem' }}>
-          Your cart is empty.
-        </p>
-        <Link to="/store">
-          <Button variant="secondary" size="sm">
-            Browse the store
-          </Button>
-        </Link>
-      </div>
+      <EmptyState
+        message="Your cart is empty."
+        action={
+          <Link to="/store">
+            <Button variant="secondary" size="sm">
+              Browse the store
+            </Button>
+          </Link>
+        }
+      />
     );
   }
 
@@ -29,14 +37,13 @@ export function CartContents() {
     <div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         {items.map((item) => {
-          const product = findProduct(item.productId);
-          const variant = product?.variants.find((v) => v.id === item.variantId);
-          if (!product || !variant) return null;
-          const unitPrice = product.basePrice + variant.priceModifier;
+          const resolved = resolveCartItem(item);
+          if (!resolved) return null;
+          const { product, variant, unitPrice, lineTotal } = resolved;
 
           return (
             <div
-              key={`${item.productId}-${item.variantId}`}
+              key={cartLineKey(item)}
               style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.75rem' }}
             >
               <div>
@@ -44,13 +51,13 @@ export function CartContents() {
                   {product.name}
                 </p>
                 <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8125rem', color: 'var(--color-text-secondary)', margin: '0.15rem 0' }}>
-                  {variant.label} &middot; ${unitPrice} each
+                  {variant.label} &middot; {formatPrice(unitPrice)} each
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.35rem' }}>
                   <button
                     onClick={() => updateQuantity(item.productId, item.variantId, item.quantity - 1)}
                     aria-label={`Decrease quantity of ${product.name}`}
-                    style={{ border: '1px solid var(--color-border)', background: 'none', borderRadius: '4px', width: '28px', height: '28px', cursor: 'pointer' }}
+                    style={stepperButtonStyle}
                   >
                     &minus;
                   </button>
@@ -63,7 +70,7 @@ export function CartContents() {
                   <button
                     onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)}
                     aria-label={`Increase quantity of ${product.name}`}
-                    style={{ border: '1px solid var(--color-border)', background: 'none', borderRadius: '4px', width: '28px', height: '28px', cursor: 'pointer' }}
+                    style={stepperButtonStyle}
                   >
                     +
                   </button>
@@ -77,7 +84,7 @@ export function CartContents() {
                 </div>
               </div>
               <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, whiteSpace: 'nowrap' }}>
-                ${unitPrice * item.quantity}
+                {formatPrice(lineTotal)}
               </span>
             </div>
           );
@@ -86,7 +93,7 @@ export function CartContents() {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1.25rem', fontFamily: 'var(--font-body)' }}>
         <span style={{ color: 'var(--color-text-secondary)' }}>Subtotal</span>
-        <span style={{ fontWeight: 700, color: 'var(--color-text-primary)' }}>${subtotal}</span>
+        <span style={{ fontWeight: 700, color: 'var(--color-text-primary)' }}>{formatPrice(subtotal)}</span>
       </div>
 
       <div style={{ marginTop: '1rem' }}>

@@ -1,4 +1,5 @@
 import type { HTMLAttributes, ReactNode } from 'react';
+import { cx } from '../utils/classNames';
 import './Badge.css';
 
 type BadgeTone = 'accent' | 'sage' | 'neutral';
@@ -9,7 +10,7 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 export function Badge({ tone = 'neutral', className = '', children, ...rest }: BadgeProps) {
-  const classes = ['wm-badge', `wm-badge--${tone}`, className].filter(Boolean).join(' ');
+  const classes = cx('wm-badge', `wm-badge--${tone}`, className);
   return (
     <span className={classes} {...rest}>
       {children}

@@ -3,7 +3,9 @@ import { WaymarkLogo } from '../components/WaymarkLogo';
 import { Button } from '../components/Button';
 import { PageContainer } from '../components/PageContainer';
 import { Card, CardTitle, CardBody } from '../components/Card';
+import { CardGrid } from '../components/CardGrid';
 import { ScrollReveal } from '../components/ScrollReveal';
+import { SectionLabel } from '../components/SectionLabel';
 import { useParallax } from '../hooks/useParallax';
 import { devotionals } from '../data/devotionals';
 
@@ -73,19 +75,7 @@ export function Home() {
 
       {today && (
         <section style={{ marginBottom: '3rem' }}>
-          <h2
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '0.8125rem',
-              fontWeight: 600,
-              letterSpacing: '0.04em',
-              textTransform: 'uppercase',
-              color: 'var(--color-text-secondary)',
-              marginBottom: '0.5rem',
-            }}
-          >
-            Today's verse
-          </h2>
+          <SectionLabel style={{ marginBottom: '0.5rem' }}>Today's verse</SectionLabel>
           <Card>
             <p
               style={{
@@ -106,20 +96,8 @@ export function Home() {
       )}
 
       <section>
-        <h2
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.8125rem',
-            fontWeight: 600,
-            letterSpacing: '0.04em',
-            textTransform: 'uppercase',
-            color: 'var(--color-text-secondary)',
-            marginBottom: '0.75rem',
-          }}
-        >
-          Explore Waymark
-        </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem' }}>
+        <SectionLabel style={{ marginBottom: '0.75rem' }}>Explore Waymark</SectionLabel>
+        <CardGrid minItemWidth={200} fit="fit">
           {pillars.map((pillar, index) => (
             <ScrollReveal key={pillar.to} delayMs={index * 100}>
               <Link to={pillar.to} className="wm-card-link">
@@ -130,7 +108,7 @@ export function Home() {
               </Link>
             </ScrollReveal>
           ))}
-        </div>
+        </CardGrid>
       </section>
     </PageContainer>
   );

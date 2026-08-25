@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { prefersReducedMotion } from '../utils/motion';
 
 /**
  * Returns a vertical offset (px) that grows with scroll position, for a
@@ -9,8 +10,7 @@ export function useParallax(factor = 0.15, max = 24) {
   const [offset, setOffset] = useState(0);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
+    if (prefersReducedMotion()) return;
 
     let ticking = false;
 

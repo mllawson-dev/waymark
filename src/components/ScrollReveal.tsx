@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { cx } from '../utils/classNames';
 import './ScrollReveal.css';
 
 interface ScrollRevealProps {
@@ -13,7 +14,7 @@ export function ScrollReveal({ children, delayMs = 0 }: ScrollRevealProps) {
   return (
     <div
       ref={ref}
-      className={`wm-scroll-reveal ${isVisible ? 'wm-scroll-reveal--visible' : ''}`}
+      className={cx('wm-scroll-reveal', isVisible && 'wm-scroll-reveal--visible')}
       style={{ transitionDelay: isVisible ? `${delayMs}ms` : '0ms' }}
     >
       {children}

@@ -1,28 +1,18 @@
 import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { CartItem } from '../types/product';
-import { findProduct } from '../data/products';
+import { isSameCartLine, resolveCartItem } from '../utils/cart';
 import { CartContext } from './CartContext';
-
-function lineTotal(item: CartItem): number {
-  const product = findProduct(item.productId);
-  if (!product) return 0;
-  const variant = product.variants.find((v) => v.id === item.variantId);
-  const unitPrice = product.basePrice + (variant?.priceModifier ?? 0);
-  return unitPrice * item.quantity;
-}
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
 
   function addItem(productId: string, variantId: string) {
     setItems((prev) => {
-      const existing = prev.find((i) => i.productId === productId && i.variantId === variantId);
+      const existing = prev.find((i) => isSameCartLine(i, productId, variantId));
       if (existing) {
         return prev.map((i) =>
-          i.productId === productId && i.variantId === variantId
-            ? { ...i, quantity: i.quantity + 1 }
-            : i
+          isSameCartLine(i, productId, variantId) ? { ...i, quantity: i.quantity + 1 } : i
         );
       }
       return [...prev, { productId, variantId, quantity: 1 }];
@@ -30,7 +20,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   function removeItem(productId: string, variantId: string) {
-    setItems((prev) => prev.filter((i) => !(i.productId === productId && i.variantId === variantId)));
+    setItems((prev) => prev.filter((i) => !isSameCartLine(i, productId, variantId)));
   }
 
   function updateQuantity(productId: string, variantId: string, quantity: number) {
@@ -39,12 +29,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return;
     }
     setItems((prev) =>
-      prev.map((i) => (i.productId === productId && i.variantId === variantId ? { ...i, quantity } : i))
+      prev.map((i) => (isSameCartLine(i, productId, variantId) ? { ...i, quantity } : i))
     );
   }
 
   const itemCount = useMemo(() => items.reduce((sum, i) => sum + i.quantity, 0), [items]);
-  const subtotal = useMemo(() => items.reduce((sum, i) => sum + lineTotal(i), 0), [items]);
+  const subtotal = useMemo(
+    () => items.reduce((sum, i) => sum + (resolveCartItem(i)?.lineTotal ?? 0), 0),
+    [items]
+  );
 
   return (
     <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, itemCount, subtotal }}>

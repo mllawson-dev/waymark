@@ -12,6 +12,7 @@ import { CartProvider } from './context/CartProvider';
 import { useCart } from './context/useCart';
 import { Drawer } from './components/Drawer';
 import { CartContents } from './components/CartContents';
+import { pluralize } from './utils/format';
 import './App.css';
 
 const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
@@ -36,7 +37,7 @@ function NavBar({ onOpenCart }: { onOpenCart: () => void }) {
       <NavLink to="/style-guide" style={navLinkStyle}>Style guide</NavLink>
       <button
         onClick={onOpenCart}
-        aria-label={itemCount > 0 ? `Open cart, ${itemCount} item${itemCount === 1 ? '' : 's'}` : 'Open cart, empty'}
+        aria-label={itemCount > 0 ? `Open cart, ${pluralize(itemCount, 'item')}` : 'Open cart, empty'}
         style={{ marginLeft: 'auto', background: 'none', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', padding: '0.4rem 0.75rem', fontFamily: 'var(--font-body)', cursor: 'pointer', color: 'var(--color-text-primary)' }}
       >
         Cart{itemCount > 0 ? ` (${itemCount})` : ''}

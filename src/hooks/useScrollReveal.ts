@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { prefersReducedMotion } from '../utils/motion';
 
 /**
  * Returns a ref to attach to an element and whether it has scrolled into view.
@@ -7,9 +8,7 @@ import { useEffect, useRef, useState } from 'react';
  */
 export function useScrollReveal<T extends HTMLElement>(threshold = 0.15) {
   const ref = useRef<T>(null);
-  const [isVisible, setIsVisible] = useState(
-    () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  );
+  const [isVisible, setIsVisible] = useState(prefersReducedMotion);
 
   useEffect(() => {
     // Already visible (either reduced motion was preferred, or a previous

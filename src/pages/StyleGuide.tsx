@@ -1,28 +1,12 @@
 import { useState } from 'react';
-import type { ReactNode } from 'react';
 import { Button } from '../components/Button';
 import { PageContainer } from '../components/PageContainer';
 import { Card, CardTitle, CardBody, CardFooter } from '../components/Card';
 import { Badge } from '../components/Badge';
 import { Drawer } from '../components/Drawer';
 import { StreakBadge } from '../components/StreakBadge';
+import { SectionLabel } from '../components/SectionLabel';
 import { WaymarkLogo } from '../components/WaymarkLogo';
-
-function SectionHeading({ children }: { children: ReactNode }) {
-  return (
-    <h2
-      style={{
-        fontFamily: 'var(--font-body)',
-        fontSize: '0.9rem',
-        color: 'var(--color-text-secondary)',
-        textTransform: 'uppercase',
-        letterSpacing: '0.04em',
-      }}
-    >
-      {children}
-    </h2>
-  );
-}
 
 interface ColorSwatch {
   name: string;
@@ -55,7 +39,7 @@ export function StyleGuide() {
       </p>
 
       <section style={{ marginBottom: '2.5rem' }}>
-        <SectionHeading>Logo</SectionHeading>
+        <SectionLabel variant="heading">Logo</SectionLabel>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginTop: '0.75rem' }}>
           <WaymarkLogo size={56} />
           <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.875rem', color: 'var(--color-text-secondary)', maxWidth: 380 }}>
@@ -66,7 +50,7 @@ export function StyleGuide() {
       </section>
 
       <section style={{ marginBottom: '2.5rem' }}>
-        <SectionHeading>Color</SectionHeading>
+        <SectionLabel variant="heading">Color</SectionLabel>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '0.75rem', marginTop: '0.75rem' }}>
           {colorSwatches.map((swatch) => (
             <div key={swatch.cssVar} style={{ border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
@@ -85,7 +69,7 @@ export function StyleGuide() {
       </section>
 
       <section style={{ marginBottom: '2.5rem' }}>
-        <SectionHeading>Typography</SectionHeading>
+        <SectionLabel variant="heading">Typography</SectionLabel>
         <div style={{ marginTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <p style={{ fontFamily: 'var(--font-heading)', fontSize: '2.25rem', color: 'var(--color-text-primary)', margin: 0 }}>
             Heading — Fraunces 2.25rem
@@ -106,7 +90,7 @@ export function StyleGuide() {
       </section>
 
       <section style={{ marginBottom: '2.5rem' }}>
-        <SectionHeading>Spacing &amp; radius</SectionHeading>
+        <SectionLabel variant="heading">Spacing &amp; radius</SectionLabel>
         <div style={{ display: 'flex', gap: '1.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
           {(['sm', 'md', 'lg'] as const).map((size) => (
             <div key={size} style={{ textAlign: 'center' }}>
@@ -128,7 +112,7 @@ export function StyleGuide() {
       </section>
 
       <section style={{ marginBottom: '2.5rem' }}>
-        <SectionHeading>Buttons</SectionHeading>
+        <SectionLabel variant="heading">Buttons</SectionLabel>
         <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
           <Button variant="primary">Start today's reading</Button>
           <Button variant="secondary">Browse resources</Button>
@@ -140,7 +124,7 @@ export function StyleGuide() {
       </section>
 
       <section style={{ marginBottom: '2.5rem' }}>
-        <SectionHeading>Badges</SectionHeading>
+        <SectionLabel variant="heading">Badges</SectionLabel>
         <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem' }}>
           <Badge tone="accent">Prayer</Badge>
           <Badge tone="sage">Growth</Badge>
@@ -149,14 +133,14 @@ export function StyleGuide() {
       </section>
 
       <section style={{ marginBottom: '2.5rem' }}>
-        <SectionHeading>Streak badge</SectionHeading>
+        <SectionLabel variant="heading">Streak badge</SectionLabel>
         <div style={{ marginTop: '0.75rem' }}>
           <StreakBadge streak={4} />
         </div>
       </section>
 
       <section style={{ marginBottom: '2.5rem' }}>
-        <SectionHeading>Card</SectionHeading>
+        <SectionLabel variant="heading">Card</SectionLabel>
         <div style={{ maxWidth: 320, marginTop: '0.75rem' }}>
           <Card>
             <Badge tone="accent">Grief</Badge>
@@ -175,7 +159,7 @@ export function StyleGuide() {
       </section>
 
       <section>
-        <SectionHeading>Drawer</SectionHeading>
+        <SectionLabel variant="heading">Drawer</SectionLabel>
         <div style={{ marginTop: '0.75rem' }}>
           <Button variant="secondary" onClick={() => setDrawerOpen(true)}>
             Open cart

@@ -1,5 +1,9 @@
 import type { Resource } from '../types/resource';
 
+export function findResource(resourceId: string | undefined): Resource | undefined {
+  return resources.find((r) => r.id === resourceId);
+}
+
 export const resources: Resource[] = [
   {
     id: 'res-001',
