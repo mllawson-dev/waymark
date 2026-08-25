@@ -46,7 +46,7 @@ export function ResourceDetailPage() {
       </div>
 
       {resource.downloadUrl && (
-        <Button variant="secondary" onClick={() => window.open(resource.downloadUrl, '_blank')}>
+        <Button variant="secondary" onClick={() => window.open(resource.downloadUrl, '_blank', 'noopener,noreferrer')}>
           Download study guide
         </Button>
       )}

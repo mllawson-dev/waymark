@@ -11,15 +11,34 @@ function daysBetween(a: string, b: string): number {
   return Math.round((new Date(b).getTime() - new Date(a).getTime()) / msPerDay);
 }
 
+function emptyProgress(): DevotionalProgress {
+  return { completedDevotionalIds: [], currentStreak: 0, longestStreak: 0, lastCompletedDate: null };
+}
+
+function isProgress(value: unknown): value is DevotionalProgress {
+  if (typeof value !== 'object' || value === null) return false;
+  const candidate = value as Record<string, unknown>;
+  return (
+    Array.isArray(candidate.completedDevotionalIds) &&
+    candidate.completedDevotionalIds.every((id) => typeof id === 'string') &&
+    typeof candidate.currentStreak === 'number' &&
+    Number.isFinite(candidate.currentStreak) &&
+    typeof candidate.longestStreak === 'number' &&
+    Number.isFinite(candidate.longestStreak) &&
+    (candidate.lastCompletedDate === null || typeof candidate.lastCompletedDate === 'string')
+  );
+}
+
 function loadProgress(): DevotionalProgress {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
-      return { completedDevotionalIds: [], currentStreak: 0, longestStreak: 0, lastCompletedDate: null };
+      return emptyProgress();
     }
-    return JSON.parse(raw) as DevotionalProgress;
+    const parsed: unknown = JSON.parse(raw);
+    return isProgress(parsed) ? parsed : emptyProgress();
   } catch {
-    return { completedDevotionalIds: [], currentStreak: 0, longestStreak: 0, lastCompletedDate: null };
+    return emptyProgress();
   }
 }
 
