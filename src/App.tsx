@@ -8,6 +8,7 @@ import { ProductDetailPage } from './pages/ProductDetailPage';
 import { ResourcesPage } from './pages/ResourcesPage';
 import { ResourceDetailPage } from './pages/ResourceDetailPage';
 import { AboutPage } from './pages/AboutPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 import { CartProvider } from './context/CartProvider';
 import { useCart } from './context/useCart';
 import { Drawer } from './components/Drawer';
@@ -82,6 +83,7 @@ function AppShell() {
           <Route path="/store/:productId" element={<ProductDetailPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/style-guide" element={<StyleGuide />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
       <Drawer isOpen={cartOpen} onClose={() => setCartOpenedAtPath(null)} title="Your cart">

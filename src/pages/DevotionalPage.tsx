@@ -21,14 +21,19 @@ export function DevotionalPage() {
   const [progress, setProgress] = useState<DevotionalProgress>(() => getProgress());
   const [completed, setCompleted] = useState(() => (today ? isDevotionalComplete(today.id) : false));
   const [announcement, setAnnouncement] = useState('');
+  const [saveFailed, setSaveFailed] = useState(false);
 
   function handleComplete() {
     if (!today || completed) return;
-    const updated = markDevotionalComplete(today.id);
+    const { progress: updated, persisted } = markDevotionalComplete(today.id);
     setProgress(updated);
     setCompleted(true);
+    setSaveFailed(!persisted);
+    const streakText = `Streak: ${updated.currentStreak} day${updated.currentStreak === 1 ? '' : 's'}.`;
     setAnnouncement(
-      `Marked as read. Streak: ${updated.currentStreak} day${updated.currentStreak === 1 ? '' : 's'}.`
+      persisted
+        ? `Marked as read. ${streakText}`
+        : `Marked as read. ${streakText} We couldn't save your progress on this device, so it will reset when you reload.`
     );
   }
 
@@ -91,6 +96,19 @@ export function DevotionalPage() {
           )}
           {completed ? "Marked as read today" : 'Mark as read'}
         </Button>
+        {saveFailed && (
+          <p
+            role="alert"
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.8125rem',
+              color: 'var(--color-text-secondary)',
+              marginTop: '0.75rem',
+            }}
+          >
+            We couldn't save your progress on this device &mdash; your streak will reset when you reload.
+          </p>
+        )}
         <LiveAnnouncer message={announcement} />
       </div>
 

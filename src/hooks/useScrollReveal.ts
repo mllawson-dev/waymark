@@ -19,6 +19,13 @@ export function useScrollReveal<T extends HTMLElement>(threshold = 0.15) {
     const node = ref.current;
     if (!node) return;
 
+    // Without IntersectionObserver the content would stay hidden forever, so
+    // reveal it rather than silently dropping the element from the page.
+    if (typeof IntersectionObserver === 'undefined') {
+      setIsVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
