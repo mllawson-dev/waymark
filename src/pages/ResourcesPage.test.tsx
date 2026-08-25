@@ -120,7 +120,7 @@ describe('ResourceDetailPage', () => {
     renderResource('res-004');
     fireEvent.click(screen.getByRole('button', { name: 'Download study guide' }));
 
-    expect(open).toHaveBeenCalledWith('#', '_blank');
+    expect(open).toHaveBeenCalledWith('#', '_blank', 'noopener,noreferrer');
     open.mockRestore();
   });
 });
