@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { resources } from '../data/resources';
 import { Badge } from '../components/Badge';
@@ -8,6 +9,13 @@ import { PageContainer } from '../components/PageContainer';
 export function ResourceDetailPage() {
   const { resourceId } = useParams<{ resourceId: string }>();
   const resource = resources.find((r) => r.id === resourceId);
+  const [downloadBlocked, setDownloadBlocked] = useState(false);
+
+  function handleDownload(url: string) {
+    // A blocked popup returns null, which would otherwise look like a dead button.
+    const opened = window.open(url, '_blank', 'noopener,noreferrer');
+    setDownloadBlocked(opened === null);
+  }
 
   if (!resource) {
     return (
@@ -18,6 +26,8 @@ export function ResourceDetailPage() {
       </PageContainer>
     );
   }
+
+  const downloadUrl = resource.downloadUrl;
 
   return (
     <PageContainer>
@@ -45,10 +55,29 @@ export function ResourceDetailPage() {
         ))}
       </div>
 
-      {resource.downloadUrl && (
-        <Button variant="secondary" onClick={() => window.open(resource.downloadUrl, '_blank')}>
-          Download study guide
-        </Button>
+      {downloadUrl && (
+        <>
+          <Button variant="secondary" onClick={() => handleDownload(downloadUrl)}>
+            Download study guide
+          </Button>
+          {downloadBlocked && (
+            <p
+              role="alert"
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.8125rem',
+                color: 'var(--color-text-secondary)',
+                marginTop: '0.75rem',
+              }}
+            >
+              Your browser blocked the download window.{' '}
+              <a href={downloadUrl} target="_blank" rel="noopener noreferrer">
+                Open the study guide directly
+              </a>
+              .
+            </p>
+          )}
+        </>
       )}
     </PageContainer>
   );

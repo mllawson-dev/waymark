@@ -31,7 +31,35 @@ export function CartContents() {
         {items.map((item) => {
           const product = findProduct(item.productId);
           const variant = product?.variants.find((v) => v.id === item.variantId);
-          if (!product || !variant) return null;
+
+          // The line is still in the cart and still counted in `itemCount`, so
+          // dropping it from the list would leave the cart looking wrong with
+          // no way to fix it. Show it as unavailable and let it be removed.
+          if (!product || !variant) {
+            return (
+              <div
+                key={`${item.productId}-${item.variantId}`}
+                style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', borderBottom: '1px solid var(--color-border)', paddingBottom: '0.75rem' }}
+              >
+                <div>
+                  <p style={{ fontFamily: 'var(--font-body)', fontWeight: 600, margin: 0, color: 'var(--color-text-primary)' }}>
+                    This item is no longer available
+                  </p>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8125rem', color: 'var(--color-text-secondary)', margin: '0.15rem 0' }}>
+                    Remove it to continue to checkout.
+                  </p>
+                  <button
+                    onClick={() => removeItem(item.productId, item.variantId)}
+                    aria-label="Remove unavailable item from cart"
+                    style={{ border: 'none', background: 'none', color: 'var(--color-text-secondary)', fontSize: '0.8125rem', cursor: 'pointer', padding: 0, marginTop: '0.35rem' }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            );
+          }
+
           const unitPrice = product.basePrice + variant.priceModifier;
 
           return (
