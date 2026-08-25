@@ -3,6 +3,8 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "es2023",
     "lib": ["ES2023", "DOM"],
+    // TypeScript 6 no longer bundles the DOM lib; it comes from @typescript/lib-dom.
+    "libReplacement": true,
     "module": "esnext",
     "types": ["vite/client"],
     "allowArbitraryExtensions": true,
