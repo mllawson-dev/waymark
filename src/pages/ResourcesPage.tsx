@@ -22,9 +22,11 @@ export function ResourcesPage() {
   }), [activeCategory, query]);
 
   function updateParam(name: 'q' | 'category', value: string) {
-    const next = new URLSearchParams(searchParams);
-    if (!value || value === 'all') next.delete(name); else next.set(name, value);
-    setSearchParams(next, { replace: name === 'q' });
+    setSearchParams((current) => {
+      const next = new URLSearchParams(current);
+      if (!value || value === 'all') next.delete(name); else next.set(name, value);
+      return next;
+    }, { replace: name === 'q' });
   }
 
   return (
