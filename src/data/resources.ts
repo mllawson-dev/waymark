@@ -36,7 +36,6 @@ export const resources: Resource[] = [
     category: 'growth',
     tags: ['change', 'study guide'],
     publishedDate: '2026-05-10',
-    downloadUrl: '#',
   },
   {
     id: 'res-005',

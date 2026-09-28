@@ -1,32 +1,22 @@
-# React + TypeScript + Vite
+# Waymark
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Waymark is a polished front-end concept for a quiet daily devotional companion. It includes a daily reading experience, date-based streak tracking, filterable resources, a concept shop, a persistent demo cart, and a transparent checkout demonstration.
 
-Currently, two official plugins are available:
+## View it locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Install dependencies with `npm install`.
+2. Start the site with `npm run dev`.
+3. Open the local address shown in the terminal.
 
-## React Compiler
+Run `npm run build` for the production build and `npm run lint` for source checks.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Prototype boundaries
 
-## Expanding the Oxlint configuration
+- The shop and checkout are interface demonstrations. No payment is collected.
+- Checkout form details are never transmitted or stored.
+- Devotional progress and cart contents are stored only in the visitor's browser.
+- Resource articles are original sample content for this portfolio concept.
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## Stack
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+React 19, TypeScript, React Router, and Vite. The responsive interface uses custom CSS and original product artwork generated for this concept.

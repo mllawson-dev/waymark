@@ -80,3 +80,18 @@
   overflow-y: auto;
   flex: 1;
 }
+
+.wm-quantity-button {
+  width: var(--tap-target);
+  height: var(--tap-target);
+  border: var(--border-control);
+  border-radius: var(--radius-small);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.wm-quantity-button:hover { background: var(--color-secondary-hover); }
+.wm-cart-checkout { width: 100%; text-decoration: none; }
+.wm-cart-note { margin-top: var(--space-3); color: var(--color-text-secondary); font-size: var(--text-xs); text-align: center; }

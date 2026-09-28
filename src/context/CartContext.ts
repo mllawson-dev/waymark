@@ -6,6 +6,7 @@ export interface CartContextValue {
   addItem: (productId: string, variantId: string) => void;
   removeItem: (productId: string, variantId: string) => void;
   updateQuantity: (productId: string, variantId: string, quantity: number) => void;
+  clearCart: () => void;
   itemCount: number;
   subtotal: number;
 }

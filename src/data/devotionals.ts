@@ -34,3 +34,8 @@ export const devotionals: Devotional[] = [
   },
 ];
 
+export function getDailyDevotional(date = new Date()): Devotional {
+  const startOfYear = new Date(date.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((date.getTime() - startOfYear.getTime()) / 86_400_000);
+  return devotionals[(dayOfYear - 1 + devotionals.length) % devotionals.length] ?? devotionals[0]!;
+}
