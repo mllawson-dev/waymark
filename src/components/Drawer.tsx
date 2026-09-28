@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, RefObject } from 'react';
 import { useEffect, useId, useRef } from 'react';
 import './Drawer.css';
 
@@ -7,12 +7,13 @@ interface DrawerProps {
   onClose: () => void;
   title: string;
   children: ReactNode;
+  backgroundRef?: RefObject<HTMLElement | null>;
 }
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export function Drawer({ isOpen, onClose, title, children }: DrawerProps) {
+export function Drawer({ isOpen, onClose, title, children, backgroundRef }: DrawerProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
@@ -24,15 +25,18 @@ export function Drawer({ isOpen, onClose, title, children }: DrawerProps) {
     if (isOpen) {
       previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
       closeButtonRef.current?.focus();
+      if (backgroundRef?.current) backgroundRef.current.inert = true;
       document.body.style.overflow = 'hidden';
     } else {
+      if (backgroundRef?.current) backgroundRef.current.inert = false;
       previouslyFocusedRef.current?.focus();
       document.body.style.overflow = '';
     }
     return () => {
+      if (backgroundRef?.current) backgroundRef.current.inert = false;
       document.body.style.overflow = '';
     };
-  }, [isOpen]);
+  }, [backgroundRef, isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;

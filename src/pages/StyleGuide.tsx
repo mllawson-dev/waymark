@@ -59,8 +59,8 @@ export function StyleGuide() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginTop: '0.75rem' }}>
           <WaymarkLogo size={56} />
           <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.875rem', color: 'var(--color-text-secondary)', maxWidth: 380 }}>
-            A two-toned compass needle — terracotta pointing north, ink pointing south. Hover it for a
-            settling wobble, the site's signature interaction.
+            The approved two-toned compass needle — terracotta pointing north and ink pointing south —
+            rendered from the protected large, medium, and favicon geometries.
           </p>
         </div>
       </section>

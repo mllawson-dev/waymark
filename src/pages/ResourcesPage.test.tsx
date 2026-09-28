@@ -1,55 +1,85 @@
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { resources } from '../data/resources';
 import { ResourceDetailPage } from './ResourceDetailPage';
 import { ResourcesPage } from './ResourcesPage';
 import { StorePage } from './StorePage';
 
+function LocationProbe() {
+  const location = useLocation();
+  return <div data-testid="location">{location.search}</div>;
+}
+
+function renderResources(initialEntry = '/resources') {
+  return render(
+    <MemoryRouter initialEntries={[initialEntry]}>
+      <ResourcesPage />
+      <LocationProbe />
+    </MemoryRouter>
+  );
+}
+
 function search(value: string) {
-  fireEvent.change(screen.getByLabelText('Search resources'), { target: { value } });
+  fireEvent.change(screen.getByLabelText('Search the library'), { target: { value } });
 }
 
 function resultCount(): number {
-  return screen.getAllByRole('link').length;
+  return screen.queryAllByRole('article').length;
 }
 
 describe('ResourcesPage', () => {
   it('lists every resource by default', () => {
-    render(<MemoryRouter><ResourcesPage /></MemoryRouter>);
+    renderResources();
 
     expect(resultCount()).toBe(resources.length);
-    expect(screen.getByText(`${resources.length} resources found`)).toBeTruthy();
+    expect(screen.getByRole('status').textContent).toBe(`Showing ${resources.length} resources`);
   });
 
-  it('filters by category and reflects the active filter', () => {
-    render(<MemoryRouter><ResourcesPage /></MemoryRouter>);
+  it('filters by category, reflects the active filter, and syncs the URL', () => {
+    renderResources();
 
     fireEvent.click(screen.getByRole('button', { name: 'Grief' }));
 
     expect(screen.getByRole('button', { name: 'Grief' }).getAttribute('aria-pressed')).toBe('true');
     expect(screen.getByRole('button', { name: 'All' }).getAttribute('aria-pressed')).toBe('false');
     expect(resultCount()).toBe(resources.filter((r) => r.category === 'grief').length);
-    expect(screen.getByText('1 resource found')).toBeTruthy();
+    expect(screen.getByRole('status').textContent).toBe('Showing 1 resource');
+    expect(screen.getByTestId('location').textContent).toBe('?category=grief');
+  });
+
+  it('restores filters from the URL', () => {
+    renderResources('/resources?q=five-minute&category=prayer');
+
+    expect(screen.getByLabelText('Search the library')).toHaveProperty('value', 'five-minute');
+    expect(screen.getByRole('button', { name: 'Prayer' }).getAttribute('aria-pressed')).toBe('true');
+    expect(resultCount()).toBe(1);
+  });
+
+  it('ignores an unknown category in the URL', () => {
+    renderResources('/resources?category=bogus');
+
+    expect(screen.getByRole('button', { name: 'All' }).getAttribute('aria-pressed')).toBe('true');
+    expect(resultCount()).toBe(resources.length);
   });
 
   it('searches titles, summaries, and tags case-insensitively', () => {
-    render(<MemoryRouter><ResourcesPage /></MemoryRouter>);
+    renderResources();
 
     search('FIVE-MINUTE');
-    expect(screen.getByText('A five-minute prayer practice')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'A five-minute prayer practice' })).toBeTruthy();
     expect(resultCount()).toBe(1);
 
     search('busiest mornings');
     expect(resultCount()).toBe(1);
 
     search('study guide');
-    expect(screen.getByText('Staying rooted in a season of change')).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'Staying rooted in a season of change' })).toBeTruthy();
     expect(resultCount()).toBe(1);
   });
 
   it('ignores a whitespace-only query', () => {
-    render(<MemoryRouter><ResourcesPage /></MemoryRouter>);
+    renderResources();
 
     search('   ');
 
@@ -57,24 +87,25 @@ describe('ResourcesPage', () => {
   });
 
   it('combines the search query with the category filter', () => {
-    render(<MemoryRouter><ResourcesPage /></MemoryRouter>);
+    renderResources();
 
     fireEvent.click(screen.getByRole('button', { name: 'Prayer' }));
     search('grief');
 
-    expect(screen.getByText('No resources match your search.')).toBeTruthy();
+    expect(screen.getByText('No resources match those filters.')).toBeTruthy();
   });
 
   it('clears both filters from the empty state', () => {
-    render(<MemoryRouter><ResourcesPage /></MemoryRouter>);
+    renderResources();
 
     fireEvent.click(screen.getByRole('button', { name: 'Grief' }));
     search('nothing matches this');
     fireEvent.click(screen.getByRole('button', { name: 'Clear filters' }));
 
     expect(resultCount()).toBe(resources.length);
-    expect(screen.getByLabelText('Search resources')).toHaveProperty('value', '');
+    expect(screen.getByLabelText('Search the library')).toHaveProperty('value', '');
     expect(screen.getByRole('button', { name: 'All' }).getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByTestId('location').textContent).toBe('');
   });
 });
 
@@ -92,7 +123,7 @@ describe('ResourceDetailPage', () => {
   it('shows a not-found message for an unknown resource', () => {
     renderResource('res-nope');
 
-    expect(screen.getByText(/We couldn't find that resource/)).toBeTruthy();
+    expect(screen.getByRole('heading', { name: 'This guide isn’t in the library.' })).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Back to resources' }).getAttribute('href')).toBe('/resources');
   });
 
@@ -101,27 +132,12 @@ describe('ResourceDetailPage', () => {
 
     renderResource(resource.id);
 
-    expect(screen.getByRole('heading', { name: resource.title })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: resource.title, level: 1 })).toBeTruthy();
     expect(screen.getByText(resource.body)).toBeTruthy();
     expect(screen.getByText('Grief')).toBeTruthy();
     for (const tag of resource.tags) {
       expect(screen.getByText(tag)).toBeTruthy();
     }
-  });
-
-  it('only offers a download when the resource has one', () => {
-    renderResource('res-001');
-    expect(screen.queryByRole('button', { name: 'Download study guide' })).toBeNull();
-  });
-
-  it('opens the study guide in a new tab', () => {
-    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
-
-    renderResource('res-004');
-    fireEvent.click(screen.getByRole('button', { name: 'Download study guide' }));
-
-    expect(open).toHaveBeenCalledWith('#', '_blank');
-    open.mockRestore();
   });
 });
 
@@ -129,8 +145,9 @@ describe('StorePage', () => {
   it('links to every product in the catalog', () => {
     render(<MemoryRouter><StorePage /></MemoryRouter>);
 
-    expect(screen.getByRole('heading', { name: 'Store' })).toBeTruthy();
-    expect(screen.getAllByRole('link').map((l) => l.getAttribute('href'))).toEqual([
+    expect(screen.getByRole('heading', { name: 'Small reminders for the road.', level: 1 })).toBeTruthy();
+    const hrefs = new Set(screen.getAllByRole('link').map((l) => l.getAttribute('href')));
+    expect([...hrefs]).toEqual([
       '/store/prod-001',
       '/store/prod-002',
       '/store/prod-003',

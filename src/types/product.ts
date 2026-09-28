@@ -13,7 +13,9 @@ export interface Product {
   description: string;
   category: ProductCategory;
   basePrice: number;
-  imageUrl?: string;
+  image: string;
+  imageAlt: string;
+  details: string[];
   variants: ProductVariant[];
 }
 

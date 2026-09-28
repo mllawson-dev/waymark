@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Routes, Route, NavLink, useLocation } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { StyleGuide } from './pages/StyleGuide';
 import { DevotionalPage } from './pages/DevotionalPage';
@@ -8,95 +8,80 @@ import { ProductDetailPage } from './pages/ProductDetailPage';
 import { ResourcesPage } from './pages/ResourcesPage';
 import { ResourceDetailPage } from './pages/ResourceDetailPage';
 import { AboutPage } from './pages/AboutPage';
+import { CheckoutPage } from './pages/CheckoutPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 import { CartProvider } from './context/CartProvider';
-import { useCart } from './context/useCart';
 import { Drawer } from './components/Drawer';
 import { CartContents } from './components/CartContents';
+import { SiteHeader } from './components/SiteHeader';
+import { SiteFooter } from './components/SiteFooter';
 import './App.css';
 
-const navLinkStyle = ({ isActive }: { isActive: boolean }) => ({
-  color: 'var(--color-accent-deep)',
-  fontWeight: isActive ? 700 : 400,
-  textDecoration: isActive ? 'underline' : 'none',
-  textUnderlineOffset: '4px',
-});
-
-function NavBar({ onOpenCart }: { onOpenCart: () => void }) {
-  const { itemCount } = useCart();
-  return (
-    <nav
-      aria-label="Main navigation"
-      style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem 1.5rem', fontFamily: 'var(--font-body)' }}
-    >
-      <NavLink to="/" end style={navLinkStyle}>Home</NavLink>
-      <NavLink to="/devotional" style={navLinkStyle}>Devotional</NavLink>
-      <NavLink to="/resources" style={navLinkStyle}>Resources</NavLink>
-      <NavLink to="/store" style={navLinkStyle}>Store</NavLink>
-      <NavLink to="/about" style={navLinkStyle}>About</NavLink>
-      <NavLink to="/style-guide" style={navLinkStyle}>Style guide</NavLink>
-      <button
-        onClick={onOpenCart}
-        aria-label={itemCount > 0 ? `Open cart, ${itemCount} item${itemCount === 1 ? '' : 's'}` : 'Open cart, empty'}
-        style={{ marginLeft: 'auto', background: 'none', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', padding: '0.4rem 0.75rem', fontFamily: 'var(--font-body)', cursor: 'pointer', color: 'var(--color-text-primary)' }}
-      >
-        Cart{itemCount > 0 ? ` (${itemCount})` : ''}
-      </button>
-    </nav>
-  );
-}
+const pageMeta: Record<string, { title: string; description: string }> = {
+  '/': { title: 'Waymark — one faithful step at a time', description: 'A quiet daily companion for scripture, reflection, and the next faithful step.' },
+  '/devotional': { title: "Today's devotional — Waymark", description: 'Read today’s verse, reflection, and prayer, then mark the day complete.' },
+  '/resources': { title: 'Resources — Waymark', description: 'Honest, practical resources for prayer, grief, parenting, growth, and community.' },
+  '/store': { title: 'Concept shop — Waymark', description: 'A portfolio concept shop of devotional objects designed for the everyday walk.' },
+  '/about': { title: 'Our approach — Waymark', description: 'Why Waymark makes room for honest questions, ordinary days, and one next step.' },
+  '/checkout': { title: 'Demo checkout — Waymark', description: 'Review the Waymark portfolio prototype checkout. No payment is collected.' },
+};
 
 function AppShell() {
   const [cartOpenedAtPath, setCartOpenedAtPath] = useState<string | null>(null);
   const location = useLocation();
-
-  // SPA route changes don't trigger a browser page load, so screen reader
-  // users get no signal the page changed. Move focus to the new page's
-  // main content, matching how a full page navigation would behave.
-  useEffect(() => {
-    const mainEl = document.getElementById('main-content');
-    if (mainEl) {
-      mainEl.setAttribute('tabindex', '-1');
-      mainEl.focus();
-    }
-  }, [location.pathname]);
-
-  // The drawer is considered open only if it was opened on the current
-  // path — this closes it automatically the instant the route changes
-  // (e.g. a link clicked from inside/behind it), without needing an
-  // effect: it's derived during render rather than synchronized after it.
+  const backgroundRef = useRef<HTMLDivElement>(null);
+  const previousPathRef = useRef(location.pathname);
   const cartOpen = cartOpenedAtPath === location.pathname;
+
+  useEffect(() => {
+    if (previousPathRef.current !== location.pathname) {
+      previousPathRef.current = location.pathname;
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      const mainEl = document.getElementById('main-content');
+      if (mainEl) {
+        mainEl.setAttribute('tabindex', '-1');
+        mainEl.focus();
+      }
+    }
+    const exact = pageMeta[location.pathname];
+    const fallback = location.pathname.startsWith('/resources/')
+      ? { title: 'Resource — Waymark', description: pageMeta['/resources']!.description }
+      : location.pathname.startsWith('/store/')
+        ? { title: 'Shop item — Waymark', description: pageMeta['/store']!.description }
+        : { title: 'Page not found — Waymark', description: 'The requested Waymark page could not be found.' };
+    const meta = exact ?? fallback;
+    document.title = meta.title;
+    document.querySelector('meta[name="description"]')?.setAttribute('content', meta.description);
+  }, [location.pathname]);
 
   return (
     <>
-      <a href="#main-content" className="wm-skip-link">
-        Skip to main content
-      </a>
-      <NavBar onOpenCart={() => setCartOpenedAtPath(location.pathname)} />
-      <div key={location.pathname} className="wm-page-transition">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/devotional" element={<DevotionalPage />} />
-          <Route path="/resources" element={<ResourcesPage />} />
-          <Route path="/resources/:resourceId" element={<ResourceDetailPage />} />
-          <Route path="/store" element={<StorePage />} />
-          <Route path="/store/:productId" element={<ProductDetailPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/style-guide" element={<StyleGuide />} />
-        </Routes>
+      <a href="#main-content" className="wm-skip-link">Skip to main content</a>
+      <div ref={backgroundRef}>
+        <SiteHeader onOpenCart={() => setCartOpenedAtPath(location.pathname)} />
+        <div key={location.pathname} className="wm-page-transition">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/devotional" element={<DevotionalPage />} />
+            <Route path="/resources" element={<ResourcesPage />} />
+            <Route path="/resources/:resourceId" element={<ResourceDetailPage />} />
+            <Route path="/store" element={<StorePage />} />
+            <Route path="/store/:productId" element={<ProductDetailPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/style-guide" element={<StyleGuide />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </div>
+        <SiteFooter />
       </div>
-      <Drawer isOpen={cartOpen} onClose={() => setCartOpenedAtPath(null)} title="Your cart">
+      <Drawer isOpen={cartOpen} onClose={() => setCartOpenedAtPath(null)} title="Your cart" backgroundRef={backgroundRef}>
         <CartContents />
       </Drawer>
     </>
   );
 }
 
-function App() {
-  return (
-    <CartProvider>
-      <AppShell />
-    </CartProvider>
-  );
+export default function App() {
+  return <CartProvider><AppShell /></CartProvider>;
 }
-
-export default App;

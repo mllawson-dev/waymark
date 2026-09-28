@@ -1,8 +1,26 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { CartItem } from '../types/product';
 import { findProduct } from '../data/products';
 import { CartContext } from './CartContext';
+
+const CART_STORAGE_KEY = 'waymark:cart';
+
+function loadCart(): CartItem[] {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) ?? '[]');
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((item): item is CartItem =>
+      typeof item?.productId === 'string' &&
+      typeof item?.variantId === 'string' &&
+      Number.isInteger(item?.quantity) &&
+      item.quantity > 0 &&
+      Boolean(findProduct(item.productId)?.variants.some((variant) => variant.id === item.variantId))
+    );
+  } catch {
+    return [];
+  }
+}
 
 function lineTotal(item: CartItem): number {
   const product = findProduct(item.productId);
@@ -13,7 +31,15 @@ function lineTotal(item: CartItem): number {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<CartItem[]>(loadCart);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    } catch {
+      // Storage can be unavailable in private browsing; the cart still works for this session.
+    }
+  }, [items]);
 
   function addItem(productId: string, variantId: string) {
     setItems((prev) => {
@@ -43,11 +69,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     );
   }
 
+  function clearCart() {
+    setItems([]);
+  }
+
   const itemCount = useMemo(() => items.reduce((sum, i) => sum + i.quantity, 0), [items]);
   const subtotal = useMemo(() => items.reduce((sum, i) => sum + lineTotal(i), 0), [items]);
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, itemCount, subtotal }}>
+    <CartContext.Provider value={{ items, addItem, removeItem, updateQuantity, clearCart, itemCount, subtotal }}>
       {children}
     </CartContext.Provider>
   );

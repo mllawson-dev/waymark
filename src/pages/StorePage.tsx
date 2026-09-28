@@ -1,22 +1,35 @@
 import { products } from '../data/products';
 import { ProductCard } from '../components/ProductCard';
-import { ScrollReveal } from '../components/ScrollReveal';
-import { PageContainer } from '../components/PageContainer';
+import './Store.css';
 
 export function StorePage() {
   return (
-    <PageContainer width="wide">
-      <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.75rem', color: 'var(--color-text-primary)', marginBottom: '1.5rem' }}>
-        Store
-      </h1>
-      <h2 className="wm-visually-hidden">All products</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1.25rem' }}>
-        {products.map((product, index) => (
-          <ScrollReveal key={product.id} delayMs={(index % 6) * 60}>
-            <ProductCard product={product} />
-          </ScrollReveal>
-        ))}
-      </div>
-    </PageContainer>
+    <main id="main-content">
+      <section className="wm-store-intro wm-section">
+        <div className="wm-section-content">
+          <div className="wm-page-intro wm-page-intro--left">
+            <p className="wm-eyebrow">Concept shop</p>
+            <h1>Small reminders for the road.</h1>
+            <p>Thoughtful objects imagined for scripture, reflection, and the everyday walk. This is a transparent portfolio demonstration; no real payment is collected.</p>
+          </div>
+          <div className="wm-prototype-note" role="note">
+            <strong>Explore the full product journey.</strong>
+            <span>Add items, choose variants, review your cart, and complete the clearly labeled demo checkout.</span>
+          </div>
+        </div>
+      </section>
+      <section className="wm-store-grid-section">
+        <div className="wm-section-content wm-product-grid">
+          {products.map((product, index) => <ProductCard key={product.id} product={product} featured={index === 0} />)}
+        </div>
+      </section>
+      <section className="wm-store-principles">
+        <div className="wm-section-content wm-store-principles__grid">
+          <div><span>01</span><h2>Useful before decorative</h2><p>Every object begins with a purpose in the daily practice.</p></div>
+          <div><span>02</span><h2>Quiet materials</h2><p>Natural texture, restrained color, and details that reward attention.</p></div>
+          <div><span>03</span><h2>Honest prototype</h2><p>The experience is complete enough to explore without pretending to process a sale.</p></div>
+        </div>
+      </section>
+    </main>
   );
 }

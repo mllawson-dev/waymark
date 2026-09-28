@@ -42,6 +42,13 @@ describe('CartContents', () => {
 
     expect(screen.getByText('Your cart is empty.')).toBeTruthy();
     expect(screen.getByRole('link', { name: 'Browse the store' }).getAttribute('href')).toBe('/store');
+    expect(screen.queryByRole('link', { name: 'Review demo checkout' })).toBeNull();
+  });
+
+  it('links to the demo checkout when the cart has items', () => {
+    renderCart([['prod-004', 'var-004a', 1]]);
+
+    expect(screen.getByRole('link', { name: 'Review demo checkout' }).getAttribute('href')).toBe('/checkout');
   });
 
   it('lists each line with its variant, unit price, and line total', () => {
@@ -49,9 +56,9 @@ describe('CartContents', () => {
 
     expect(screen.getByText('Waymark 90-Day Devotional')).toBeTruthy();
     // base 24 + hardcover modifier 8
-    expect(screen.getByText(/Hardcover · \$32 each/)).toBeTruthy();
+    expect(screen.getByText(/Hardcover · \$32\.00 each/)).toBeTruthy();
     expect(screen.getByText('2')).toBeTruthy();
-    expect(screen.getAllByText('$64')).toHaveLength(2); // line total and subtotal
+    expect(screen.getAllByText('$64.00')).toHaveLength(2); // line total and subtotal
   });
 
   it('shows the subtotal across lines', () => {
@@ -60,7 +67,7 @@ describe('CartContents', () => {
       ['prod-002', 'var-002a', 2],
     ]);
 
-    expect(screen.getByText('Subtotal').nextElementSibling?.textContent).toBe('$80');
+    expect(screen.getByText('Subtotal').nextElementSibling?.textContent).toBe('$80.00');
   });
 
   it('increases and decreases the quantity of a line', () => {
@@ -69,10 +76,10 @@ describe('CartContents', () => {
     const decrease = screen.getByRole('button', { name: 'Decrease quantity of Waymark Tee' });
 
     fireEvent.click(increase);
-    expect(screen.getByText('Subtotal').nextElementSibling?.textContent).toBe('$56');
+    expect(screen.getByText('Subtotal').nextElementSibling?.textContent).toBe('$56.00');
 
     fireEvent.click(decrease);
-    expect(screen.getByText('Subtotal').nextElementSibling?.textContent).toBe('$28');
+    expect(screen.getByText('Subtotal').nextElementSibling?.textContent).toBe('$28.00');
   });
 
   it('drops the line when the quantity is decreased below one', () => {
@@ -103,6 +110,6 @@ describe('CartContents', () => {
     ]);
 
     expect(screen.getAllByRole('button', { name: /^Remove/ })).toHaveLength(1);
-    expect(screen.getByText('Subtotal').nextElementSibling?.textContent).toBe('$48');
+    expect(screen.getByText('Subtotal').nextElementSibling?.textContent).toBe('$48.00');
   });
 });
