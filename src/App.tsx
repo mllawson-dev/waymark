@@ -40,7 +40,7 @@ function AppShell() {
       const mainEl = document.getElementById('main-content');
       if (mainEl) {
         mainEl.setAttribute('tabindex', '-1');
-        mainEl.focus();
+        mainEl.focus({ preventScroll: true });
       }
     }
     const exact = pageMeta[location.pathname];
