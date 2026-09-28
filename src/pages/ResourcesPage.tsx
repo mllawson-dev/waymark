@@ -42,6 +42,12 @@ export function ResourcesPage() {
     }, { replace: name === 'q' });
   }
 
+  function clearFilters() {
+    pendingQueryRef.current = '';
+    setDraft('');
+    setSearchParams({});
+  }
+
   return (
     <main id="main-content" className="wm-resources-page">
       <header className="wm-resources-hero">
@@ -68,7 +74,7 @@ export function ResourcesPage() {
             <div className="wm-resource-empty">
               <h2>No resources match those filters.</h2>
               <p>Try a broader search or return to the complete library.</p>
-              <button type="button" className="wm-button wm-button--secondary wm-button--md" onClick={() => { updateParam('q', ''); updateParam('category', 'all'); }}>Clear filters</button>
+              <button type="button" className="wm-button wm-button--secondary wm-button--md" onClick={clearFilters}>Clear filters</button>
             </div>
           ) : (
             <div className="wm-resource-grid">
