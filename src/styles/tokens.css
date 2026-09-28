@@ -1,32 +1,85 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Nunito+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* Brand palette — Waymark: Warm & Modern */
-  --wm-cream: #FBF6EE;
-  --wm-cream-deep: #F4EBDA;
-  --wm-ink: #3D2E1F;
-  --wm-ink-muted: #6E614F; /* darkened from #8A7A63 for WCAG AA text contrast (5.6:1 on cream) */
-  --wm-terracotta: #C97C3D; /* decorative use only — borders, glows, logo; too light for AA text on cream */
-  --wm-terracotta-deep: #965D2D; /* darkened from #A6642E for WCAG AA text contrast (5.0:1 on cream, 5.4:1 white-on-bg) */
-  --wm-gold: #D9A24B;
-  --wm-border: #E4D8C3;
-  --wm-sage: #5F6B54; /* darkened from #7C8B6F for WCAG AA text contrast */
+  color-scheme: light;
 
-  /* Semantic aliases */
+  --wm-cream: #fbf6ee;
+  --wm-cream-deep: #f1e6d6;
+  --wm-paper: #fffdf9;
+  --wm-ink: #33271c;
+  --wm-ink-muted: #685a49;
+  --wm-terracotta: #965d2d;
+  --wm-terracotta-hover: #75431f;
+  --wm-gold: #d9a24b;
+  --wm-sage: #5f6b54;
+  --wm-border: #d8c8b2;
+  --wm-border-strong: #a99173;
+
   --color-bg: var(--wm-cream);
-  --color-surface: #FFFFFF;
+  --color-surface: var(--wm-paper);
   --color-text-primary: var(--wm-ink);
   --color-text-secondary: var(--wm-ink-muted);
-  --color-accent: var(--wm-terracotta);
-  --color-accent-deep: var(--wm-terracotta-deep);
-  --color-border: var(--wm-border);
+  --color-primary: var(--wm-terracotta);
+  --color-primary-hover: var(--wm-terracotta-hover);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--wm-cream-deep);
+  --color-secondary-hover: #e7d6bf;
+  --color-secondary-foreground: var(--wm-ink);
+  --color-accent: var(--wm-gold);
   --color-success: var(--wm-sage);
+  --color-border: var(--wm-border);
+  --color-ring: var(--wm-terracotta-hover);
+  --color-accent-deep: var(--wm-terracotta);
+  --color-inverse: #2c2219;
+  --color-inverse-text: #fffaf2;
+  --color-inverse-muted: #d7c9b7;
+  --color-inverse-border: #594939;
 
-  /* Typography */
   --font-heading: 'Fraunces', Georgia, serif;
-  --font-body: 'Nunito Sans', -apple-system, sans-serif;
+  --font-body: 'Nunito Sans', system-ui, sans-serif;
 
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: clamp(1rem, 1.05vw, 1.0625rem);
+  --text-lg: clamp(1.0625rem, 1.25vw, 1.25rem);
+  --text-xl: clamp(1.25rem, 1.6vw, 1.5rem);
+  --text-2xl: clamp(1.75rem, 3vw, 2.75rem);
+  --text-hero: clamp(2.75rem, 6.2vw, 5.4rem);
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-section: clamp(4.5rem, 9vw, 8.75rem);
+
+  --layout-gutter: clamp(1.25rem, 5vw, 5rem);
+  --content-max: 88rem;
+  --content-wide: 108rem;
+  --content-narrow: 46rem;
+  --header-height: 4.75rem;
+  --tap-target: 2.75rem;
+
+  --radius-small: 0.5rem;
+  --radius-medium: 1rem;
+  --radius-large: 1.75rem;
+  --radius-sm: var(--radius-small);
+  --radius-md: var(--radius-medium);
+  --radius-lg: var(--radius-large);
+  --border-default: 1px solid var(--color-border);
+  --border-control: 1px solid var(--wm-border-strong);
+  --shadow-card: 0 0.75rem 2.5rem rgba(91, 66, 39, 0.08);
+  --shadow-elevated: 0 1.25rem 3.75rem rgba(61, 46, 31, 0.16);
+  --motion-gentle: 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (max-width: 480px) {
+  :root { --layout-gutter: 1rem; --header-height: 4.25rem; }
+}
+
+@media (min-width: 1920px) {
+  :root { --content-max: 100rem; --layout-gutter: clamp(5rem, 6vw, 8rem); }
 }

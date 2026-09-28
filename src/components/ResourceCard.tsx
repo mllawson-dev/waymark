@@ -1,22 +1,14 @@
 import { Link } from 'react-router-dom';
-import { Card, CardTitle, CardBody, CardFooter } from './Card';
-import { Badge } from './Badge';
 import { categoryLabels } from '../data/categoryLabels';
 import type { Resource } from '../types/resource';
 
-export function ResourceCard({ resource }: { resource: Resource }) {
+export function ResourceCard({ resource, featured = false }: { resource: Resource; featured?: boolean }) {
   return (
-    <Link to={`/resources/${resource.id}`} className="wm-card-link">
-      <Card>
-        <Badge tone="accent">{categoryLabels[resource.category]}</Badge>
-        <CardTitle>{resource.title}</CardTitle>
-        <CardBody>{resource.summary}</CardBody>
-        <CardFooter>
-          <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.8125rem', color: 'var(--color-text-secondary)' }}>
-            {resource.tags.join(' · ')}
-          </span>
-        </CardFooter>
-      </Card>
-    </Link>
+    <article className={`wm-resource-card${featured ? ' wm-resource-card--featured' : ''}`}>
+      <p className="wm-resource-card__meta"><span>{categoryLabels[resource.category]}</span><span>{resource.tags.join(' · ')}</span></p>
+      <h2><Link to={`/resources/${resource.id}`}>{resource.title}</Link></h2>
+      <p>{resource.summary}</p>
+      <Link to={`/resources/${resource.id}`} className="wm-resource-card__link">Read resource <span aria-hidden="true">→</span></Link>
+    </article>
   );
 }

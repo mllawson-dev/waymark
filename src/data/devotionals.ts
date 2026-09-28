@@ -34,3 +34,11 @@ export const devotionals: Devotional[] = [
   },
 ];
 
+export function getDailyDevotional(date = new Date()): Devotional {
+  // Compare calendar days in UTC so DST shifts (23/25-hour local days)
+  // can't push the day-of-year count off by one.
+  const utcDay = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+  const utcStart = Date.UTC(date.getFullYear(), 0, 1);
+  const dayOfYear = Math.round((utcDay - utcStart) / 86_400_000) + 1;
+  return devotionals[(dayOfYear - 1) % devotionals.length] ?? devotionals[0]!;
+}

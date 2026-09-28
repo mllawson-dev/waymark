@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 72 72" role="img" aria-labelledby="waymark-title waymark-desc">
+  <title id="waymark-title">Waymark</title>
+  <desc id="waymark-desc">A two-toned compass needle, terracotta pointing north and ink pointing south, inside a terracotta ring.</desc>
+  <circle cx="34" cy="34" r="34" fill="none" stroke="#C97C3D" stroke-width="2.5"/>
+  <path d="M34 4 L42 34 L34 34 Z" fill="#C97C3D"/>
+  <path d="M34 64 L26 34 L34 34 Z" fill="#3D2E1F"/>
+  <circle cx="34" cy="34" r="2.5" fill="#3D2E1F"/>
+</svg>

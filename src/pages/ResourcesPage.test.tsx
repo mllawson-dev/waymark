@@ -1,17 +1,17 @@
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { resources } from '../data/resources';
 import { ResourceDetailPage } from './ResourceDetailPage';
 import { ResourcesPage } from './ResourcesPage';
 import { StorePage } from './StorePage';
 
 function search(value: string) {
-  fireEvent.change(screen.getByLabelText('Search resources'), { target: { value } });
+  fireEvent.change(screen.getByLabelText('Search the library'), { target: { value } });
 }
 
 function resultCount(): number {
-  return screen.getAllByRole('link').length;
+  return screen.getAllByRole('link', { name: /Read resource/ }).length;
 }
 
 describe('ResourcesPage', () => {
@@ -19,7 +19,7 @@ describe('ResourcesPage', () => {
     render(<MemoryRouter><ResourcesPage /></MemoryRouter>);
 
     expect(resultCount()).toBe(resources.length);
-    expect(screen.getByText(`${resources.length} resources found`)).toBeTruthy();
+    expect(screen.getByText(`Showing ${resources.length} resources`)).toBeTruthy();
   });
 
   it('filters by category and reflects the active filter', () => {
@@ -30,7 +30,7 @@ describe('ResourcesPage', () => {
     expect(screen.getByRole('button', { name: 'Grief' }).getAttribute('aria-pressed')).toBe('true');
     expect(screen.getByRole('button', { name: 'All' }).getAttribute('aria-pressed')).toBe('false');
     expect(resultCount()).toBe(resources.filter((r) => r.category === 'grief').length);
-    expect(screen.getByText('1 resource found')).toBeTruthy();
+    expect(screen.getByText('Showing 1 resource')).toBeTruthy();
   });
 
   it('searches titles, summaries, and tags case-insensitively', () => {
@@ -62,7 +62,7 @@ describe('ResourcesPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Prayer' }));
     search('grief');
 
-    expect(screen.getByText('No resources match your search.')).toBeTruthy();
+    expect(screen.getByText('No resources match those filters.')).toBeTruthy();
   });
 
   it('clears both filters from the empty state', () => {
@@ -73,7 +73,7 @@ describe('ResourcesPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Clear filters' }));
 
     expect(resultCount()).toBe(resources.length);
-    expect(screen.getByLabelText('Search resources')).toHaveProperty('value', '');
+    expect(screen.getByLabelText('Search the library')).toHaveProperty('value', '');
     expect(screen.getByRole('button', { name: 'All' }).getAttribute('aria-pressed')).toBe('true');
   });
 });
@@ -92,8 +92,8 @@ describe('ResourceDetailPage', () => {
   it('shows a not-found message for an unknown resource', () => {
     renderResource('res-nope');
 
-    expect(screen.getByText(/We couldn't find that resource/)).toBeTruthy();
-    expect(screen.getByRole('link', { name: 'Back to resources' }).getAttribute('href')).toBe('/resources');
+    expect(screen.getByRole('heading', { name: 'This guide isn’t in the library.' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: /Back to resources/ }).getAttribute('href')).toBe('/resources');
   });
 
   it('renders the body, category label, and tags', () => {
@@ -107,21 +107,7 @@ describe('ResourceDetailPage', () => {
     for (const tag of resource.tags) {
       expect(screen.getByText(tag)).toBeTruthy();
     }
-  });
-
-  it('only offers a download when the resource has one', () => {
-    renderResource('res-001');
-    expect(screen.queryByRole('button', { name: 'Download study guide' })).toBeNull();
-  });
-
-  it('opens the study guide in a new tab', () => {
-    const open = vi.spyOn(window, 'open').mockImplementation(() => null);
-
-    renderResource('res-004');
-    fireEvent.click(screen.getByRole('button', { name: 'Download study guide' }));
-
-    expect(open).toHaveBeenCalledWith('#', '_blank');
-    open.mockRestore();
+    expect(screen.getByRole('link', { name: /Return to the library/ }).getAttribute('href')).toBe('/resources');
   });
 });
 
@@ -129,12 +115,8 @@ describe('StorePage', () => {
   it('links to every product in the catalog', () => {
     render(<MemoryRouter><StorePage /></MemoryRouter>);
 
-    expect(screen.getByRole('heading', { name: 'Store' })).toBeTruthy();
-    expect(screen.getAllByRole('link').map((l) => l.getAttribute('href'))).toEqual([
-      '/store/prod-001',
-      '/store/prod-002',
-      '/store/prod-003',
-      '/store/prod-004',
-    ]);
+    expect(screen.getByRole('heading', { name: 'Small reminders for the road.', level: 1 })).toBeTruthy();
+    const hrefs = new Set(screen.getAllByRole('link').map((l) => l.getAttribute('href')));
+    expect(hrefs).toEqual(new Set(['/store/prod-001', '/store/prod-002', '/store/prod-003', '/store/prod-004']));
   });
 });

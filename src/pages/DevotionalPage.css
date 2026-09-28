@@ -1,0 +1,26 @@
+.wm-devotional-page { width: min(100% - (var(--layout-gutter) * 2), var(--content-max)); margin-inline: auto; padding-block: var(--space-section); }
+.wm-devotional-header { display: flex; justify-content: space-between; align-items: end; gap: var(--space-7); margin-bottom: clamp(3rem, 7vw, 6rem); padding-bottom: var(--space-7); border-bottom: 1px solid var(--wm-border-strong); }
+.wm-devotional-header h1 { margin: var(--space-4) 0; font-size: clamp(2.6rem, 5.5vw, 5rem); }
+.wm-devotional-header > div:first-child > p:last-child { max-width: 42rem; color: var(--color-text-secondary); font-size: var(--text-lg); }
+.wm-devotional-stats { min-width: 13rem; display: grid; justify-items: end; gap: var(--space-3); color: var(--color-text-secondary); font-size: var(--text-xs); }
+.wm-devotional-reading { display: grid; grid-template-columns: minmax(20rem, 0.85fr) minmax(0, 1.15fr); gap: clamp(3rem, 8vw, 9rem); align-items: start; }
+.wm-reflection { padding-top: var(--space-5); }
+.wm-reflection h2 { max-width: 15ch; margin: var(--space-4) 0 var(--space-5); font-size: clamp(2.2rem, 4.5vw, 4rem); }
+.wm-reflection > p:not(.wm-eyebrow, .wm-progress-note) { max-width: 45rem; color: var(--color-text-secondary); font-size: var(--text-lg); line-height: 1.85; }
+.wm-reflection blockquote { margin: var(--space-7) 0; padding: var(--space-5) 0 var(--space-5) var(--space-6); border-left: 3px solid var(--color-accent); color: var(--color-text-primary); font: italic 500 var(--text-xl)/1.7 var(--font-heading); }
+.wm-reflection blockquote span { display: block; margin-bottom: var(--space-2); color: var(--color-text-secondary); font: 800 var(--text-xs)/1.5 var(--font-body); letter-spacing: 0.1em; text-transform: uppercase; }
+.wm-progress-note { margin-top: var(--space-3); color: var(--color-text-secondary); font-size: var(--text-xs); }
+.wm-past-readings { display: grid; grid-template-columns: minmax(16rem, 0.6fr) minmax(0, 1.4fr); gap: clamp(3rem, 8vw, 9rem); margin-top: var(--space-section); padding-top: var(--space-section); border-top: 1px solid var(--wm-border-strong); }
+.wm-past-readings__heading h2 { max-width: 10ch; margin-top: var(--space-4); font-size: var(--text-2xl); }
+.wm-past-readings__list { display: grid; }
+.wm-past-readings article { display: grid; grid-template-columns: 3rem 1fr; gap: var(--space-4); padding: var(--space-6) 0; border-top: var(--border-default); }
+.wm-past-readings article:first-child { border-top-color: var(--wm-border-strong); }
+.wm-past-readings article > span { color: var(--color-primary); font-size: var(--text-xs); font-weight: 800; letter-spacing: 0.1em; }
+.wm-past-readings h3 { margin-bottom: var(--space-2); font-size: var(--text-xl); }
+.wm-past-readings article p { color: var(--color-text-secondary); line-height: 1.7; }
+
+@media (max-width: 820px) {
+  .wm-devotional-header, .wm-devotional-reading, .wm-past-readings { grid-template-columns: 1fr; }
+  .wm-devotional-header { display: grid; align-items: start; }
+  .wm-devotional-stats { justify-items: start; }
+}

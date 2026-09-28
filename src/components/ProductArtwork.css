@@ -1,0 +1,47 @@
+.wm-product-artwork {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  overflow: hidden;
+}
+
+.wm-product-artwork > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.wm-product-artwork__mark {
+  position: absolute;
+  display: block;
+  width: 12%;
+  aspect-ratio: 1;
+  filter: drop-shadow(0 0.15rem 0.12rem rgba(61, 46, 31, 0.2));
+}
+
+.wm-product-artwork__mark svg {
+  width: 100%;
+  height: 100%;
+}
+
+.wm-product-artwork--prod-001 .wm-product-artwork__mark {
+  top: 37%;
+  left: 51%;
+  transform: translate(-50%, -50%) rotate(-10deg);
+}
+
+.wm-product-artwork--prod-002 .wm-product-artwork__mark {
+  top: 49%;
+  left: 69%;
+  width: 8%;
+  transform: translate(-50%, -50%) rotate(2deg);
+}
+
+.wm-product-artwork--prod-004 .wm-product-artwork__mark {
+  top: 48%;
+  left: 61%;
+  width: 18%;
+  transform: translate(-50%, -50%) rotate(6deg);
+  filter: drop-shadow(0.35rem 0.55rem 0.35rem rgba(61, 46, 31, 0.3));
+}
