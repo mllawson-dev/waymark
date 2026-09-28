@@ -13,7 +13,7 @@ export function StreakBadge({ streak }: StreakBadgeProps) {
       <span key={streak} className="wm-streak-badge__count wm-streak-badge__count--pop">
         {streak}
       </span>
-      <span className="wm-streak-badge__label">{streak === 1 ? 'day streak' : 'day streak'}</span>
+      <span className="wm-streak-badge__label">day streak</span>
     </div>
   );
 }

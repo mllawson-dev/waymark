@@ -19,7 +19,7 @@ export interface ReadingPlan {
 }
 
 export interface DevotionalProgress {
-  completedDevotionalIds: string[];
+  completedDates: string[];
   currentStreak: number;
   longestStreak: number;
   lastCompletedDate: string | null;

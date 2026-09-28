@@ -1,18 +1,24 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DevotionalProgress } from '../types/devotional';
-import { getProgress, isDevotionalComplete, markDevotionalComplete } from './devotionalProgress';
+import { getLocalDateISO, getProgress, isDevotionalComplete, markDevotionalComplete } from './devotionalProgress';
 
 const STORAGE_KEY = 'waymark:devotional-progress';
 
+const EMPTY: DevotionalProgress = {
+  completedDates: [],
+  currentStreak: 0,
+  longestStreak: 0,
+  lastCompletedDate: null,
+};
+
+function isoDaysAgo(days: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  return getLocalDateISO(date);
+}
+
 function seed(progress: Partial<DevotionalProgress>): void {
-  const full: DevotionalProgress = {
-    completedDevotionalIds: [],
-    currentStreak: 0,
-    longestStreak: 0,
-    lastCompletedDate: null,
-    ...progress,
-  };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(full));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...EMPTY, ...progress }));
 }
 
 function stored(): DevotionalProgress {
@@ -22,7 +28,7 @@ function stored(): DevotionalProgress {
 describe('devotionalProgress', () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    vi.setSystemTime(new Date('2026-08-20T09:30:00Z'));
+    vi.setSystemTime(new Date('2026-08-20T15:30:00Z'));
   });
 
   afterEach(() => {
@@ -32,127 +38,172 @@ describe('devotionalProgress', () => {
 
   describe('getProgress', () => {
     it('returns empty progress when nothing is stored', () => {
-      expect(getProgress()).toEqual({
-        completedDevotionalIds: [],
-        currentStreak: 0,
-        longestStreak: 0,
-        lastCompletedDate: null,
-      });
+      expect(getProgress()).toEqual(EMPTY);
     });
 
     it('returns empty progress when the stored value is not valid JSON', () => {
       localStorage.setItem(STORAGE_KEY, '{not json');
 
-      expect(getProgress()).toEqual({
-        completedDevotionalIds: [],
-        currentStreak: 0,
-        longestStreak: 0,
-        lastCompletedDate: null,
-      });
+      expect(getProgress()).toEqual(EMPTY);
     });
 
     it('returns empty progress when localStorage reads throw', () => {
-      vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      vi.spyOn(localStorage, 'getItem').mockImplementation(() => {
         throw new Error('access denied');
       });
 
+      expect(getProgress()).toEqual(EMPTY);
+    });
+
+    it('returns the stored progress while the streak is still live', () => {
+      seed({
+        completedDates: [isoDaysAgo(2), isoDaysAgo(1)],
+        currentStreak: 3,
+        longestStreak: 5,
+        lastCompletedDate: isoDaysAgo(1),
+      });
+
       expect(getProgress()).toEqual({
-        completedDevotionalIds: [],
-        currentStreak: 0,
-        longestStreak: 0,
-        lastCompletedDate: null,
+        completedDates: [isoDaysAgo(2), isoDaysAgo(1)],
+        currentStreak: 3,
+        longestStreak: 5,
+        lastCompletedDate: isoDaysAgo(1),
       });
     });
 
-    it('returns the stored progress', () => {
-      seed({ completedDevotionalIds: ['dev-001'], currentStreak: 3, longestStreak: 5, lastCompletedDate: '2026-08-19' });
-
-      expect(getProgress()).toEqual({
-        completedDevotionalIds: ['dev-001'],
-        currentStreak: 3,
-        longestStreak: 5,
-        lastCompletedDate: '2026-08-19',
+    it('reports a stale streak as zero without touching the longest streak', () => {
+      seed({
+        completedDates: [isoDaysAgo(5)],
+        currentStreak: 7,
+        longestStreak: 7,
+        lastCompletedDate: isoDaysAgo(5),
       });
+
+      expect(getProgress().currentStreak).toBe(0);
+      expect(getProgress().longestStreak).toBe(7);
+      expect(getProgress().lastCompletedDate).toBe(isoDaysAgo(5));
     });
   });
 
   describe('markDevotionalComplete', () => {
     it('starts a streak of one on the first completion and persists it', () => {
-      const result = markDevotionalComplete('dev-001');
+      const today = isoDaysAgo(0);
+      const result = markDevotionalComplete(today);
 
       expect(result).toEqual({
-        completedDevotionalIds: ['dev-001'],
+        completedDates: [today],
         currentStreak: 1,
         longestStreak: 1,
-        lastCompletedDate: '2026-08-20',
+        lastCompletedDate: today,
       });
       expect(stored()).toEqual(result);
     });
 
-    it('extends the streak when the previous completion was yesterday', () => {
-      seed({ completedDevotionalIds: ['dev-001'], currentStreak: 2, longestStreak: 2, lastCompletedDate: '2026-08-19' });
+    it('extends the streak across consecutive days', () => {
+      seed({
+        completedDates: [isoDaysAgo(2), isoDaysAgo(1)],
+        currentStreak: 2,
+        longestStreak: 2,
+        lastCompletedDate: isoDaysAgo(1),
+      });
 
-      const result = markDevotionalComplete('dev-002');
+      const result = markDevotionalComplete(isoDaysAgo(0));
 
       expect(result.currentStreak).toBe(3);
       expect(result.longestStreak).toBe(3);
-      expect(result.completedDevotionalIds).toEqual(['dev-001', 'dev-002']);
+      expect(result.completedDates).toHaveLength(3);
     });
 
-    it('keeps the streak unchanged for a second completion on the same day', () => {
-      seed({ completedDevotionalIds: ['dev-001'], currentStreak: 4, longestStreak: 6, lastCompletedDate: '2026-08-20' });
+    it('is a no-op for an already completed date', () => {
+      seed({
+        completedDates: [isoDaysAgo(1), isoDaysAgo(0)],
+        currentStreak: 2,
+        longestStreak: 2,
+        lastCompletedDate: isoDaysAgo(0),
+      });
+      const before = stored();
 
-      const result = markDevotionalComplete('dev-002');
+      const result = markDevotionalComplete(isoDaysAgo(0));
 
-      expect(result.currentStreak).toBe(4);
-      expect(result.longestStreak).toBe(6);
+      expect(result).toEqual(before);
+      expect(stored()).toEqual(before);
     });
 
     it('resets the streak to one after a gap of more than a day', () => {
-      seed({ completedDevotionalIds: ['dev-001'], currentStreak: 7, longestStreak: 7, lastCompletedDate: '2026-08-15' });
+      seed({
+        completedDates: [isoDaysAgo(5)],
+        currentStreak: 7,
+        longestStreak: 7,
+        lastCompletedDate: isoDaysAgo(5),
+      });
 
-      const result = markDevotionalComplete('dev-002');
+      const result = markDevotionalComplete(isoDaysAgo(0));
 
       expect(result.currentStreak).toBe(1);
       expect(result.longestStreak).toBe(7);
     });
 
     it('keeps the longest streak when the current streak is shorter', () => {
-      seed({ completedDevotionalIds: ['dev-001'], currentStreak: 1, longestStreak: 10, lastCompletedDate: '2026-08-19' });
+      seed({
+        completedDates: [isoDaysAgo(1)],
+        currentStreak: 1,
+        longestStreak: 10,
+        lastCompletedDate: isoDaysAgo(1),
+      });
 
-      expect(markDevotionalComplete('dev-002').longestStreak).toBe(10);
+      expect(markDevotionalComplete(isoDaysAgo(0)).longestStreak).toBe(10);
     });
 
-    it('is a no-op for an already completed devotional', () => {
-      seed({ completedDevotionalIds: ['dev-001'], currentStreak: 2, longestStreak: 2, lastCompletedDate: '2026-08-19' });
-      const before = stored();
+    it('extends the streak instead of resetting it when an earlier date is filled in', () => {
+      seed({
+        completedDates: [isoDaysAgo(0)],
+        currentStreak: 1,
+        longestStreak: 1,
+        lastCompletedDate: isoDaysAgo(0),
+      });
 
-      const result = markDevotionalComplete('dev-001');
+      const result = markDevotionalComplete(isoDaysAgo(1));
 
-      expect(result).toEqual(before);
-      expect(stored()).toEqual(before);
+      expect(result.currentStreak).toBe(2);
+      expect(result.lastCompletedDate).toBe(isoDaysAgo(0));
+    });
+
+    it('does not move lastCompletedDate backwards for an unconnected earlier date', () => {
+      seed({
+        completedDates: [isoDaysAgo(0)],
+        currentStreak: 1,
+        longestStreak: 1,
+        lastCompletedDate: isoDaysAgo(0),
+      });
+
+      const result = markDevotionalComplete(isoDaysAgo(5));
+
+      expect(result.currentStreak).toBe(1);
+      expect(result.lastCompletedDate).toBe(isoDaysAgo(0));
+      expect(result.completedDates).toEqual([isoDaysAgo(5), isoDaysAgo(0)]);
     });
 
     it('still returns updated progress when persisting fails', () => {
-      vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
         throw new Error('quota exceeded');
       });
+      const today = isoDaysAgo(0);
 
-      const result = markDevotionalComplete('dev-001');
+      const result = markDevotionalComplete(today);
 
-      expect(result.completedDevotionalIds).toEqual(['dev-001']);
+      expect(result.completedDates).toEqual([today]);
       expect(result.currentStreak).toBe(1);
     });
   });
 
   describe('isDevotionalComplete', () => {
-    it('reflects whether the devotional has been completed', () => {
-      expect(isDevotionalComplete('dev-001')).toBe(false);
+    it('reflects whether the date has been completed', () => {
+      expect(isDevotionalComplete(isoDaysAgo(0))).toBe(false);
 
-      markDevotionalComplete('dev-001');
+      markDevotionalComplete(isoDaysAgo(0));
 
-      expect(isDevotionalComplete('dev-001')).toBe(true);
-      expect(isDevotionalComplete('dev-002')).toBe(false);
+      expect(isDevotionalComplete(isoDaysAgo(0))).toBe(true);
+      expect(isDevotionalComplete(isoDaysAgo(1))).toBe(false);
     });
   });
 });

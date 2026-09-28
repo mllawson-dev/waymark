@@ -1,25 +1,22 @@
 import { Link } from 'react-router-dom';
 import { useCart } from '../context/useCart';
 import { findProduct } from '../data/products';
-import { Button } from './Button';
 import { WaymarkLogo } from './WaymarkLogo';
 
-export function CartContents() {
+export function CartContents({ onNavigate }: { onNavigate?: () => void }) {
   const { items, updateQuantity, removeItem, subtotal } = useCart();
 
   if (items.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '2rem 0.5rem' }}>
         <div style={{ opacity: 0.35, marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
-          <WaymarkLogo size={40} northColor="var(--wm-ink-muted)" southColor="var(--wm-ink-muted)" ringColor="var(--wm-ink-muted)" />
+          <WaymarkLogo size={40} />
         </div>
         <p style={{ fontFamily: 'var(--font-body)', color: 'var(--color-text-secondary)', marginBottom: '1.25rem' }}>
           Your cart is empty.
         </p>
-        <Link to="/store">
-          <Button variant="secondary" size="sm">
-            Browse the store
-          </Button>
+        <Link to="/store" className="wm-button wm-button--secondary wm-button--sm" onClick={onNavigate}>
+          Browse the store
         </Link>
       </div>
     );
@@ -48,9 +45,9 @@ export function CartContents() {
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.35rem' }}>
                   <button
+                    className="wm-quantity-button"
                     onClick={() => updateQuantity(item.productId, item.variantId, item.quantity - 1)}
                     aria-label={`Decrease quantity of ${product.name}`}
-                    style={{ border: '1px solid var(--color-border)', background: 'none', borderRadius: '4px', width: '28px', height: '28px', cursor: 'pointer' }}
                   >
                     &minus;
                   </button>
@@ -61,9 +58,9 @@ export function CartContents() {
                     {item.quantity}
                   </span>
                   <button
+                    className="wm-quantity-button"
                     onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)}
                     aria-label={`Increase quantity of ${product.name}`}
-                    style={{ border: '1px solid var(--color-border)', background: 'none', borderRadius: '4px', width: '28px', height: '28px', cursor: 'pointer' }}
                   >
                     +
                   </button>
@@ -90,9 +87,10 @@ export function CartContents() {
       </div>
 
       <div style={{ marginTop: '1rem' }}>
-        <Button variant="primary" style={{ width: '100%' }}>
-          Checkout
-        </Button>
+        <Link to="/checkout" className="wm-button wm-button--primary wm-button--md wm-cart-checkout" onClick={onNavigate}>
+          Review demo checkout
+        </Link>
+        <p className="wm-cart-note">Portfolio prototype — no payment will be collected.</p>
       </div>
     </div>
   );

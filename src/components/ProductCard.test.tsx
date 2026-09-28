@@ -12,6 +12,9 @@ const product: Product = {
   description: 'A stoneware mug.',
   category: 'gifts',
   basePrice: 16,
+  image: '/mug.jpg',
+  imageAlt: 'Cream stoneware mug',
+  details: [],
   variants: [
     { id: 'var-a', label: 'Cream', priceModifier: 0, inStock: false },
     { id: 'var-b', label: 'Sage', priceModifier: 2, inStock: true },
@@ -36,19 +39,20 @@ describe('ProductCard', () => {
   it('links to the product detail page and shows the base price', () => {
     renderInRouter(<ProductCard product={product} />);
 
-    expect(screen.getByRole('link').getAttribute('href')).toBe('/store/prod-test');
+    const hrefs = new Set(screen.getAllByRole('link').map((l) => l.getAttribute('href')));
+    expect(hrefs).toEqual(new Set(['/store/prod-test']));
     expect(screen.getByRole('heading', { name: 'Waymark Mug' })).toBeTruthy();
-    expect(screen.getByText('$16')).toBeTruthy();
+    expect(screen.getByText('From $16.00')).toBeTruthy();
   });
 
-  it('shows the category while any variant is in stock', () => {
+  it('shows the category and stock state while any variant is in stock', () => {
     renderInRouter(<ProductCard product={product} />);
 
-    const badge = screen.getByText('gifts');
-    expect(badge.className).toContain('wm-badge--sage');
+    expect(screen.getByText('gifts')).toBeTruthy();
+    expect(screen.getByText('Prototype in stock')).toBeTruthy();
   });
 
-  it('shows a sold out badge when no variant is in stock', () => {
+  it('shows sold out when no variant is in stock', () => {
     const soldOut: Product = {
       ...product,
       variants: product.variants.map((v) => ({ ...v, inStock: false })),
@@ -56,8 +60,7 @@ describe('ProductCard', () => {
 
     renderInRouter(<ProductCard product={soldOut} />);
 
-    const badge = screen.getByText('Sold out');
-    expect(badge.className).toContain('wm-badge--neutral');
+    expect(screen.getByText('Sold out')).toBeTruthy();
   });
 });
 
@@ -65,7 +68,8 @@ describe('ResourceCard', () => {
   it('links to the resource, labels its category, and lists its tags', () => {
     renderInRouter(<ResourceCard resource={resource} />);
 
-    expect(screen.getByRole('link').getAttribute('href')).toBe('/resources/res-test');
+    const hrefs = new Set(screen.getAllByRole('link').map((l) => l.getAttribute('href')));
+    expect(hrefs).toEqual(new Set(['/resources/res-test']));
     expect(screen.getByText('Grief')).toBeTruthy();
     expect(screen.getByText('Praying through grief')).toBeTruthy();
     expect(screen.getByText('grief · prayer')).toBeTruthy();

@@ -1,6 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60">
-  <circle cx="30" cy="30" r="24" fill="none" stroke="#C97C3D" stroke-width="3"/>
-  <path d="M30 14 L36 30 L30 30 Z" fill="#C97C3D"/>
-  <path d="M30 46 L24 30 L30 30 Z" fill="#3D2E1F"/>
-  <circle cx="30" cy="30" r="2" fill="#3D2E1F"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 28 28" role="img" aria-label="Waymark logo">
+  <circle cx="12" cy="12" r="12" fill="none" stroke="#C97C3D" stroke-width="2.5"/>
+  <path d="M12 3 L15.5 12 L12 12 Z" fill="#C97C3D"/>
+  <path d="M12 21 L8.5 12 L12 12 Z" fill="#3D2E1F"/>
 </svg>
