@@ -1,22 +1,42 @@
 # Waymark
 
-Waymark is a polished front-end concept for a quiet daily devotional companion. It includes a daily reading experience, date-based streak tracking, filterable resources, a concept shop, a persistent demo cart, and a transparent checkout demonstration.
+An accessible React and TypeScript product prototype for a daily devotional companion: a daily reading with streak tracking, a filterable resource library, and a concept shop with a persistent cart and demo checkout.
 
-## View it locally
+**[Live site](https://waymark-steel.vercel.app/)**
 
-1. Install dependencies with `npm install`.
-2. Start the site with `npm run dev`.
-3. Open the local address shown in the terminal.
+## What I built
 
-Run `npm run build` for the production build and `npm run lint` for source checks.
+- Multi-route React 19 + TypeScript app (React Router, Vite) with a documented component library and design tokens, shown on a living style guide at `/style-guide`.
+- **Devotional** with date-based streak tracking stored in the browser.
+- **Resources** library with category filtering and detail pages.
+- **Store** with product pages, a cart drawer and a checkout demonstration. No payment is collected and form data is never sent or stored.
 
-## Prototype boundaries
+## Accessibility
 
-- The shop and checkout are interface demonstrations. No payment is collected.
-- Checkout form details are never transmitted or stored.
-- Devotional progress and cart contents are stored only in the visitor's browser.
-- Resource articles are original sample content for this portfolio concept.
+- Focus-trapped cart drawer that returns focus to the button that opened it.
+- Focus moves to the main content on every route change, with page titles updated per route.
+- A live region (`LiveAnnouncer`) announces cart and progress changes to screen readers.
+- Skip link, visible focus states and reduced-motion handling for scroll effects.
 
-## Stack
+## Quality checks
 
-React 19, TypeScript, React Router, and Vite. The responsive interface uses custom CSS and original product artwork generated for this concept.
+```sh
+npm test        # Vitest + Testing Library: 121 tests across 16 files
+npm run lint    # oxlint
+npm run build   # TypeScript strict check + production build
+```
+
+## Run locally
+
+```sh
+npm install
+npm run dev
+```
+
+## Scope
+
+A front-end prototype. Cart contents and devotional progress live only in the visitor's browser. Resource articles and product artwork are original sample content for this concept.
+
+---
+
+Designed and built by **Michael L. Lawson**, design engineer and creative developer · [mll-creativeeng.com](https://www.mll-creativeeng.com) · [LinkedIn](https://www.linkedin.com/in/michael-lawson-a7707924)
